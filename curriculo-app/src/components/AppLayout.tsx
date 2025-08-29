@@ -6,17 +6,23 @@ import React from "react";
  * - Uma p/ Formulário e outra p/ Preview
  * - Cada coluna tem seu próprio scroll
  */
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+
+interface Props {
+  children: React.ReactNode;
+}
+
+export default function AppLayout({ children }: Props) {
   // Divide os filhos em dois: [FormPanel, PreviewPanel]
   return (
-    <div className="grid grid-cols-2 h-screen">
-      {/* Coluna esquerda (formulário) */}
-      <div className="overflow-y-auto p-6 bg-gray-50 border-r">
-        {children[0]}
-      </div>
-
-      {/* Coluna direita (preview) */}
-      <div className="overflow-y-auto p-6 bg-white">{children[1]}</div>
+    <div className="h-screen grid grid-cols-2">
+      {React.Children.map(children, (child, index) => (
+        <div
+          key={index}
+          className={`overflow-y-auto ${index === 0 ? "border-r" : ""}`}
+        >
+          {child}
+        </div>
+      ))}
     </div>
   );
 }

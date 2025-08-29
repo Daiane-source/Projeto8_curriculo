@@ -41,7 +41,7 @@ export default function PreviewPanel({ cv }: PreviewPanelProps) {
         <p className="text-gray-700 whitespace-pre-line">
           {personal.summary || (
             <span className="text-gray-400">
-              Escreva aqui um resumo profissional.
+              Escreva aqui um resumo profissional
             </span>
           )}
         </p>
