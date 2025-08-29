@@ -1,29 +1,19 @@
 import React from "react";
 import type { PersonalData } from "../types/cv.d";
 
-/**
- * Formulário controlado: edita os dados e chama updatePersonal
- * para atualizar o estado central no App.tsx.
- *
- * Este componente recebe os dados pessoais para exibir nos campos
- * e uma função para atualizar esses dados no componente pai.
- */
 type Props = {
   personal: PersonalData;
   updatePersonal: (p: Partial<PersonalData>) => void;
 };
 
-//FormPanel: formulário de dados pessoais.
-// Todos os inputs são controlados (usam estado do App).
+/**
+ * FormPanel: formulário de dados pessoais
+ */
 export default function FormPanel({ personal, updatePersonal }: Props) {
   return (
-    <div className="max-w-md mx-auto">
+    <div className="space-y-4">
       <h2 className="text-xl font-semibold mb-4">Dados Pessoais</h2>
 
-      {/* Campo de entrada para o nome.
-          O valor (value) do input é diretamente lido do estado 'personal.name'.
-          Quando o valor muda (onChange), a função 'updatePersonal' é chamada
-          para atualizar o estado no componente pai, passando apenas a propriedade 'name'. */}
       {/* Nome */}
       <div>
         <label className="block text-sm font-medium">Nome</label>
@@ -36,9 +26,6 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
         />
       </div>
 
-      {/* Campo de entrada para o email.
-          Funciona de forma similar ao campo de nome, lendo o valor
-          de 'personal.email' e atualizando-o no componente pai. */}
       {/* Email */}
       <div>
         <label className="block text-sm font-medium">Email</label>
@@ -51,7 +38,6 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
         />
       </div>
 
-      {/* Campo de entrada para o telefone. */}
       {/* Telefone */}
       <div>
         <label className="block text-sm font-medium">Telefone</label>
@@ -64,7 +50,7 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
         />
       </div>
 
-      {/* Campo de entrada para o LinkedIn. */}
+      {/* LinkedIn */}
       <div>
         <label className="block text-sm font-medium">LinkedIn</label>
         <input
@@ -76,9 +62,7 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
         />
       </div>
 
-      {/* Campo de entrada de área de texto para o resumo.
-          O uso de 'textarea' permite múltiplas linhas. */}
-      {/* Resumo Profissional */}
+      {/* Resumo */}
       <div>
         <label className="block text-sm font-medium">Resumo</label>
         <textarea

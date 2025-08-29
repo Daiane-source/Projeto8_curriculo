@@ -2,14 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* estilos extras: garantir que app ocupe tela inteira */
+/* garantir que app ocupe a tela inteira */
 html,
 body,
 #root {
-  height: 100%;
+  height: auto;
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
-/* opcional: pequenas melhorias visuais */
+/* fundo claro e texto escuro */
 body {
-  @apply bg-slate-50 text-slate-900;
+  @apply bg-gray-50 text-gray-900;
 }
