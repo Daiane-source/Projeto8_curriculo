@@ -9,3 +9,5 @@ export interface PersonalData {
 export interface CVState {
   personal: PersonalData;
 }
+
+
