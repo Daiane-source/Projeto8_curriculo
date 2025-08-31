@@ -16,13 +16,17 @@ export default function SkillsForm({ skills, addSkill, removeSkill }: SkillsForm
   const [nome, setNome] = useState("");
   const [nivel, setNivel] = useState("Básico"); // valor inicial do select
 
-  // Função para lidar com o botão "Adicionar"
-  const handleAdd = () => {
-    if (nome.trim() === "") return; // não deixa adicionar vazio
-    addSkill({ nome, nivel }); // manda a nova habilidade pro App.tsx
-    setNome(""); // limpa o input
-    setNivel("Básico"); // volta pro valor inicial
-  };
+  //CAMPO VAZIO
+const handleAdd = () => {
+  if (nome.trim() === "") {
+    alert("⚠️ O campo de habilidade não pode estar vazio!");
+    return;
+  }
+  addSkill({ nome, nivel }); 
+  setNome(""); 
+  setNivel("Básico"); 
+};
+
 
   return (
     <div>
