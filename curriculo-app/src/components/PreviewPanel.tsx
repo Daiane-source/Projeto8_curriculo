@@ -1,51 +1,67 @@
+// src/components/PreviewPanel.tsx
 import React from "react";
-import type { CVState } from "../types/cv.d";
+import type { PersonalData } from "../types/cv.d";
 
 interface PreviewPanelProps {
-  cv: CVState;
+  personal: PersonalData;
 }
+
 /**
- * PreviewPanel:
- * - Recebe o estado do currículo (cv)
- * - Exibe os dados na tela
+ * PreviewPanel
+ * - Exibe foto, nome, contatos e resumo profissional
+ * - Não toca em skills nem experiences (eles têm seus próprios previews)
  */
-export default function PreviewPanel({ cv }: PreviewPanelProps) {
-  const { personal } = cv; // Desestrutura os dados pessoais
-
+export default function PreviewPanel({ personal }: PreviewPanelProps) {
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold">
-        {personal.name || <span className="text-gray-400">Seu nome aqui</span>}
-      </h1>
-
-      {/* Contato: mostra apenas se tiver valor */}
-      <p className="text-gray-700">
-        {personal.email || (
-          <span className="text-gray-400">email@email.com</span>
-        )}{" "}
-        ·{" "}
-        {personal.phone || (
-          <span className="text-gray-400">(99) 99999-9999</span>
+    <div className="max-w-2xl mx-auto bg-white text-gray-800 font-sans px-6 py-8">
+      {/* Cabeçalho: foto e dados pessoais */}
+      <div className="flex items-start gap-6 mb-8">
+        {personal.photo && (
+          <img
+            src={personal.photo}
+            alt="Foto de perfil"
+            className="w-24 h-24 rounded-full object-cover border border-gray-300 mt-4"
+            style={{width: 96, height: 96}}
+          />
         )}
-      </p>
-
-      <p className="text-blue-600">
-        {personal.linkedin || (
-          <span className="text-gray-400">linkedin.com/in/seu-perfil</span>
-        )}
-      </p>
-
-      {/* Resumo profissional */}
-      <div className="mt-4">
-        <h2 className="text-lg font-semibold">Resumo</h2>
-        <p className="text-gray-700 whitespace-pre-line">
-          {personal.summary || (
-            <span className="text-gray-400">
-              Escreva aqui um resumo profissional
-            </span>
-          )}
-        </p>
+        <div className="pt-6">
+          <h1 className="text-2xl font-bold">
+            {personal.name || "Seu nome aqui"}
+          </h1>
+          <p className="text-sm text-gray-600">
+            {personal.email || "email@email.com"} ·{" "}
+            {personal.phone || "(99) 99999-9999"}
+          </p>
+          <p className="text-sm text-gray-600">
+            {personal.linkedin || "linkedin.com/in/seu-perfil"}
+          </p>
+        </div>
       </div>
+
+      {/* Seção: Resumo Profissional */}
+      <Section title="Resumo Profissional">
+        <p className="text-gray-700 whitespace-pre-line">
+          {personal.summary ||
+            "Nenhum resumo profissional adicionado ainda."}
+        </p>
+      </Section>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-8">
+      <h2 className="text-lg font-semibold text-blue-700 border-b pb-1 mb-4 uppercase tracking-wide">
+        {title}
+      </h2>
+      {children}
     </div>
   );
 }

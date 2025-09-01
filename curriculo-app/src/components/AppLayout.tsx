@@ -1,28 +1,56 @@
 import React from "react";
 
-/**
- * AppLayout:
- * - Cria duas colunas lado a lado
- * - Uma p/ Formulário e outra p/ Preview
- * - Cada coluna tem seu próprio scroll
- */
-
 interface Props {
   children: React.ReactNode;
+  onExportPDF?: () => void;
+  onSaveCV?: () => void;
 }
 
-export default function AppLayout({ children }: Props) {
-  // Divide os filhos em dois: [FormPanel, PreviewPanel]
+export default function AppLayout({ children, onExportPDF, onSaveCV }: Props) {
   return (
-    <div className="h-screen grid grid-cols-2">
-      {React.Children.map(children, (child, index) => (
-        <div
-          key={index}
-          className={`overflow-y-auto ${index === 0 ? "border-r" : ""}`}
-        >
-          {child}
+    <div className="flex flex-col h-screen">
+
+      {/* NAVBAR */}
+      <nav className="bg-blue-800 text-white">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
+          <button
+            onClick={onExportPDF}
+            className="bg-red-600 hover:bg-red-700 transition text-white px-4 py-2 rounded shadow cursor-pointer"
+          >
+            Exportar PDF
+          </button>
         </div>
-      ))}
+      </nav>
+
+      {/* CONTEÚDO PRINCIPAL */}
+      <div className="flex-1 grid grid-cols-2 overflow-x-hidden">
+        {React.Children.map(children, (child, index) => (
+          <div
+            key={index}
+            className={`
+              h-full overflow-y-auto overflow-x-hidden bg-white
+              ${index === 0 ? "border-r border-gray-300" : ""}
+              py-6
+            `}
+          >
+            <div className="max-w-md w-full mx-auto px-4 md:px-6 space-y-6">
+              {child}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* FOOTER */}
+      <footer className="bg-blue-800 text-white">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
+          <button
+            onClick={onSaveCV}
+            className="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded shadow cursor-pointer"
+          >
+            Salvar Currículo
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
