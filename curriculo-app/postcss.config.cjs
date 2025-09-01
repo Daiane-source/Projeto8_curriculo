@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    "@tailwindcss/postcss": {}, // Plugin principal: Tailwind (novo pacote do tailwindcss)
-    autoprefixer: {}, // Gera prefixos automáticos p/ compatibilidade em navegadores
+    "@tailwindcss/postcss": {}, // Novo plugin oficial para Tailwind v4
+    autoprefixer: {},           // Mantém compatibilidade entre navegadores
   },
 };

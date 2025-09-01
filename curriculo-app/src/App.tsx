@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AppLayout from "./components/AppLayout";
 import FormPanel from "./components/FormPanel";
 import PreviewPanel from "./components/PreviewPanel";
-import SkillsForm from "./components/SkillsForm";       
-import SkillsPreview from "./components/SkillsPreview"; 
+import SkillsForm from "./components/SkillsForm";
+import SkillsPreview from "./components/SkillsPreview";
 import type { CVState } from "./types/cv.d";
+
 
 // Definição do tipo de habilidade
 type Skill = {
@@ -39,15 +40,21 @@ export default function App() {
     setSkills((prev) => prev.filter((_, i) => i !== index));
   };
 
-  return (
-    <AppLayout>
-      {/* Painel do formulário */}
-      <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
-      <SkillsForm skills={skills} addSkill={addSkill} removeSkill={removeSkill} />
+  return (   
 
-      {/* Painel de preview */}
-      <PreviewPanel cv={cv} />
-      <SkillsPreview skills={skills} />
+    <AppLayout>
+      <div>
+        <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
+        <SkillsForm
+          skills={skills}
+          addSkill={addSkill}
+          removeSkill={removeSkill}
+        />
+      </div>
+      <div>
+        <PreviewPanel cv={cv} />
+        <SkillsPreview skills={skills} />
+      </div>
     </AppLayout>
   );
 }
