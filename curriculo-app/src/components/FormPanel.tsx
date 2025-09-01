@@ -16,7 +16,7 @@ type Props = {
 // Todos os inputs são controlados (usam estado do App).
 export default function FormPanel({ personal, updatePersonal }: Props) {
   return (
-    <div className="h-screen max-w-md mx-auto">
+    <div className="max-w-md mx-auto overflow-y-auto max-h-[80vh]">
      
         <h2 className="text-xl font-semibold mb-4">Dados Pessoais</h2>
 

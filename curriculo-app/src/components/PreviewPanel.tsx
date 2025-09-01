@@ -33,13 +33,10 @@ export default function PreviewPanel({ cv }: PreviewPanelProps) {
         </div>
       </div>
 
-      {/* Objetivo */}
-      <Section title="Objetivo">
-        <p className="text-gray-700">Vendedora</p>
-      </Section>
+      
 
-      {/* Qualificação Profissional */}
-      <Section title="Qualificação Profissional">
+      {/* Resumo Profissional */}
+      <Section title="Resumo Profissional">
         <p className="text-gray-700 whitespace-pre-line">
           {personal.summary || "Excelente capacidade de comunicação, relacionamento interpessoal e foco em resultados."}
         </p>

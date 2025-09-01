@@ -12,3 +12,10 @@ export interface CVState {
 }
 
 
+export interface Experience {
+  empresa: string;
+  cargo: string;
+  inicio: string;
+  fim: string;
+  descricao: string;
+}
