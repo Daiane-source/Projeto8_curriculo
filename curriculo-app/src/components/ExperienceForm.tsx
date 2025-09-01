@@ -84,7 +84,7 @@ export default function ExperienceForm({ addExperience }: Props) {
         onChange={(e) => setDescricao(e.target.value)}
         className="w-full border p-2 rounded"
       />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow cursor-pointer hover:bg-blue-700 transition">
         Adicionar
       </button>
       </Section> 

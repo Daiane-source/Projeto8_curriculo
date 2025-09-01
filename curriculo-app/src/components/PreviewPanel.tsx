@@ -38,7 +38,7 @@ export default function PreviewPanel({ cv }: PreviewPanelProps) {
       {/* Resumo Profissional */}
       <Section title="Resumo Profissional">
         <p className="text-gray-700 whitespace-pre-line">
-          {personal.summary || "Excelente capacidade de comunicação, relacionamento interpessoal e foco em resultados."}
+          {personal.summary || "Nenhuma experiência adicionada ainda."}
         </p>
       </Section>
     </div>

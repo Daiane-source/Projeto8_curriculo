@@ -1,7 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-
 
 import AppLayout from "./components/AppLayout";
 import FormPanel from "./components/FormPanel";
@@ -26,16 +25,48 @@ export default function App() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
 
-  // funções de navbar/footer
+  // exportar PDF
   const handleExportPDF = useCallback(() => {
-    console.log("Exportar PDF!");
-    // aqui use html2pdf, jsPDF, window.print() etc.
+    console.log(">> handleExportPDF chamado");
+    const element = document.getElementById("pdfContent");
+    if (!element) {
+      console.error("Elemento #pdfContent não encontrado");
+      return;
+    }
+
+    html2canvas(element, { scale: 2 })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "pt",
+          format: "a4",
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("curriculo.pdf");
+        console.log("PDF gerado e baixado");
+      })
+      .catch((err) => {
+        console.error("Erro ao capturar PDF:", err);
+      });
   }, []);
 
+  // salvar no localStorage
   const handleSaveCV = useCallback(() => {
-    console.log("Salvar currículo!");
-    // aqui salve no backend ou localStorage
-  }, []);
+    console.log(">> handleSaveCV chamado");
+    const data = {
+      personal: cv.personal,
+      skills,
+      experiences,
+    };
+    localStorage.setItem("meuCurriculo", JSON.stringify(data));
+    console.log("LocalStorage setado:", localStorage.getItem("meuCurriculo"));
+    alert("Currículo salvo localmente!");
+  }, [cv, skills, experiences]);
 
   // atualiza dados pessoais
   const updatePersonal = (partial: Partial<CVState["personal"]>) =>
@@ -45,8 +76,7 @@ export default function App() {
     }));
 
   // insere / remove habilidades
-  const addSkill = (skill: Skill) =>
-    setSkills((prev) => [...prev, skill]);
+  const addSkill = (skill: Skill) => setSkills((prev) => [...prev, skill]);
   const removeSkill = (i: number) =>
     setSkills((prev) => prev.filter((_, idx) => idx !== i));
 
@@ -60,10 +90,7 @@ export default function App() {
     <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
       {/* Coluna 1: formulários */}
       <div>
-        <FormPanel
-          personal={cv.personal}
-          updatePersonal={updatePersonal}
-        />
+        <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
 
         <SkillsForm
           skills={skills}
@@ -80,7 +107,7 @@ export default function App() {
       </div>
 
       {/* Coluna 2: previews */}
-      <div>
+      <div id="pdfContent">
         <PreviewPanel cv={cv} />
 
         <SkillsPreview skills={skills} />

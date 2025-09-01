@@ -19,7 +19,7 @@ export default function AppLayout({
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
           <button
             onClick={onExportPDF}
-            className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition"
+            className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition cursor-pointer"
           >
             Exportar PDF
           </button>
@@ -53,7 +53,7 @@ export default function AppLayout({
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
           <button
             onClick={onSaveCV}
-            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition cursor-pointer"
           >
             Salvar Currículo
           </button>

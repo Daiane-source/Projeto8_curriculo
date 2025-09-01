@@ -48,7 +48,7 @@ export default function SkillsForm({
         </select>
         <button
           onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
         >
           Adicionar
         </button>
@@ -64,7 +64,7 @@ export default function SkillsForm({
               </span>
               <button
                 onClick={() => removeSkill(index)}
-                className="text-red-500 hover:underline"
+                className="text-red-500 hover:underline cursor-pointer"
               >
                 Excluir
               </button>
