@@ -4,6 +4,7 @@ export interface PersonalData {
   phone: string;
   linkedin: string;
   summary: string;
+  photo?: string;
 }
 
 export interface CVState {

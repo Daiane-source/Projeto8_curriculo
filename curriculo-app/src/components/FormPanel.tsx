@@ -1,4 +1,3 @@
-import React from "react";
 import type { PersonalData } from "../types/cv.d";
 
 /**
@@ -33,6 +32,26 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
           onChange={(e) => updatePersonal({ name: e.target.value })}
           className="w-full border rounded p-2"
           placeholder="Seu nome completo"
+        />
+      </div>
+
+      {/* Foto de Perfil */}
+      <div>
+        <label className="block text-sm font-medium">Foto de Perfil</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                updatePersonal({ photo: reader.result as string });
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+          className="w-full border rounded p-2"
         />
       </div>
 
