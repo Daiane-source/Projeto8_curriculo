@@ -6,7 +6,7 @@ interface Props {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <div className="bg-red-100 h-screen grid grid-cols-2">
+    <div className="bg-gray-100 h-screen grid grid-cols-2 shadow-md">
 
       {React.Children.map(children, (child, index) => (
         <div

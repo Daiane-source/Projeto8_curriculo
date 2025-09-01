@@ -34,6 +34,7 @@ const handleAdd = () => {
 
       {/* Input para o nome da habilidade */}
       <input
+      className="mb-4"
         type="text"
         placeholder="Digite uma habilidade"
         value={nome}
@@ -41,21 +42,21 @@ const handleAdd = () => {
       />
 
       {/* Select para escolher o nível */}
-      <select value={nivel} onChange={(e) => setNivel(e.target.value)}>
+      <select value={nivel} onChange={(e) => setNivel(e.target.value)} className="mb-4">
         <option value="Básico">Básico</option>
         <option value="Intermediário">Intermediário</option>
         <option value="Avançado">Avançado</option>
       </select>
 
       {/* Botão para adicionar */}
-      <button onClick={handleAdd}>Adicionar</button>
+      <button onClick={handleAdd} className="cursor-pointer">Adicionar</button>
 
       {/* Lista das habilidades já adicionadas */}
       <ul>
         {skills.map((skill, index) => (
           <li key={index}>
             {skill.nome} ({skill.nivel}){" "}
-            <button onClick={() => removeSkill(index)}>Excluir</button>
+            <button onClick={() => removeSkill(index)} className="cursor-pointer">Excluir</button>
           </li>
         ))}
       </ul>
