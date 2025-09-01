@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from "react";
+// src/App.tsx
+import React, { useState, useCallback } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -12,29 +13,67 @@ import PreviewPanel from "./components/PreviewPanel";
 import SkillsPreview from "./components/SkillsPreview";
 import ExperiencePreview from "./components/ExperiencePreview";
 
-import type { CVState, Experience, Skill } from "./types/cv.d";
+import type { CVState, Skill, Experience } from "./types/cv.d";
 
-// estado inicial dos dados pessoais
+// Estado inicial dos dados pessoais
 const initialState: CVState = {
   personal: { name: "", email: "", phone: "", linkedin: "", summary: "" },
 };
 
 export default function App() {
-  // estados centrais
+  // 1) Estados centrais
   const [cv, setCv] = useState<CVState>(initialState);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
 
-  // exportar PDF
-  const handleExportPDF = useCallback(() => {
-    console.log(">> handleExportPDF chamado");
-    const element = document.getElementById("pdfContent");
-    if (!element) {
-      console.error("Elemento #pdfContent não encontrado");
-      return;
-    }
+  // 2) Estados de rascunho para preview instantâneo
+  const [draftSkill, setDraftSkill] = useState<Skill>({
+    nome: "",
+    nivel: "Básico",
+  });
+  const [draftExp, setDraftExp] = useState<Experience>({
+    empresa: "",
+    cargo: "",
+    inicio: "",
+    fim: "",
+    descricao: "",
+  });
 
-    html2canvas(element, { scale: 2 })
+  // 3) Funções de update
+  const updatePersonal = (partial: Partial<CVState["personal"]>) =>
+    setCv((prev) => ({
+      ...prev,
+      personal: { ...prev.personal, ...partial },
+    }));
+
+  // 4) Adicionar / remover efetivamente nos arrays “salvos”
+  const saveSkill = () => {
+    if (!draftSkill.nome.trim()) return;
+    setSkills((prev) => [...prev, draftSkill]);
+    setDraftSkill({ nome: "", nivel: "Básico" });
+  };
+  const removeSkill = (i: number) =>
+    setSkills((prev) => prev.filter((_, idx) => idx !== i));
+
+  const saveExperience = () => {
+    if (!draftExp.empresa.trim()) return;
+    setExperiences((prev) => [...prev, draftExp]);
+    setDraftExp({ empresa: "", cargo: "", inicio: "", fim: "", descricao: "" });
+  };
+  const removeExperience = (i: number) =>
+    setExperiences((prev) => prev.filter((_, idx) => idx !== i));
+
+  // 5) Exportar PDF (mesma lógica de antes)
+  const handleExportPDF = useCallback(() => {
+    const pdfContent = document.getElementById("pdfContent");
+    if (!pdfContent) return;
+
+    const origH = pdfContent.style.height;
+    const origO = pdfContent.style.overflowY;
+    pdfContent.style.height = `${pdfContent.scrollHeight}px`;
+    pdfContent.style.overflowY = "visible";
+
+    html2canvas(pdfContent, { scale: 2 })
       .then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF({
@@ -42,49 +81,29 @@ export default function App() {
           unit: "pt",
           format: "a4",
         });
-
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        const w = pdf.internal.pageSize.getWidth();
+        const h = (canvas.height * w) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, w, h);
         pdf.save("curriculo.pdf");
-        console.log("PDF gerado e baixado");
       })
-      .catch((err) => {
-        console.error("Erro ao capturar PDF:", err);
+      .finally(() => {
+        pdfContent.style.height = origH;
+        pdfContent.style.overflowY = origO;
       });
   }, []);
 
-  // salvar no localStorage
+  // 6) Salvar no LocalStorage
   const handleSaveCV = useCallback(() => {
-    console.log(">> handleSaveCV chamado");
-    const data = {
-      personal: cv.personal,
-      skills,
-      experiences,
-    };
+    const data = { personal: cv.personal, skills, experiences };
     localStorage.setItem("meuCurriculo", JSON.stringify(data));
-    console.log("LocalStorage setado:", localStorage.getItem("meuCurriculo"));
     alert("Currículo salvo localmente!");
   }, [cv, skills, experiences]);
 
-  // atualiza dados pessoais
-  const updatePersonal = (partial: Partial<CVState["personal"]>) =>
-    setCv((prev) => ({
-      ...prev,
-      personal: { ...prev.personal, ...partial },
-    }));
-
-  // insere / remove habilidades
-  const addSkill = (skill: Skill) => setSkills((prev) => [...prev, skill]);
-  const removeSkill = (i: number) =>
-    setSkills((prev) => prev.filter((_, idx) => idx !== i));
-
-  // insere / remove experiências
-  const addExperience = (exp: Experience) =>
-    setExperiences((prev) => [...prev, exp]);
-  const removeExperience = (i: number) =>
-    setExperiences((prev) => prev.filter((_, idx) => idx !== i));
+  // 7) Mescla “salvo” + “rascunho” para preview instantâneo
+  const previewSkills = draftSkill.nome ? [...skills, draftSkill] : skills;
+  const previewExperiences = draftExp.empresa
+    ? [...experiences, draftExp]
+    : experiences;
 
   return (
     <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
@@ -94,11 +113,17 @@ export default function App() {
 
         <SkillsForm
           skills={skills}
-          addSkill={addSkill}
+          draft={draftSkill}
+          setDraft={setDraftSkill}
+          save={saveSkill}
           removeSkill={removeSkill}
         />
 
-        <ExperienceForm addExperience={addExperience} />
+        <ExperienceForm
+          draft={draftExp}
+          setDraft={setDraftExp}
+          save={saveExperience}
+        />
 
         <ExperienceList
           experiences={experiences}
@@ -106,13 +131,11 @@ export default function App() {
         />
       </div>
 
-      {/* Coluna 2: previews */}
-      <div id="pdfContent">
-        <PreviewPanel cv={cv} />
-
-        <SkillsPreview skills={skills} />
-
-        <ExperiencePreview experiences={experiences} />
+      {/* Coluna 2: preview em tempo real */}
+      <div id="pdfContent" className="space-y-6">
+        <PreviewPanel personal={cv.personal} />
+        <SkillsPreview skills={previewSkills} />
+        <ExperiencePreview experiences={previewExperiences} />
       </div>
     </AppLayout>
   );

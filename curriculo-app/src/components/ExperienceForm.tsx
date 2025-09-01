@@ -1,94 +1,60 @@
-// components/ExperienceForm.jsx
-import { useState } from "react";
-import type { Experience } from "../types/cv.d.ts";
-import Section from "./Section.tsx";
+import React from "react";
+import type { ExperienceFormProps } from "../types/cv.d";
 
-
-interface Props {
-  addExperience: (exp: Experience) => void;
-}
-
-export default function ExperienceForm({ addExperience }: Props) {
-
-  const [empresa, setEmpresa] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [inicio, setInicio] = useState("");
-  const [fim, setFim] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [atual, setAtual] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Validação: início deve ser menor que fim
-    if (!atual && new Date(inicio) > new Date(fim)) {
-      alert("A data de início deve ser anterior à data de término.");
-      return;
-    }
-
-    addExperience({ empresa, cargo, inicio, fim: atual ? "Atual" : fim, descricao });
-
-    // Resetar campos
-    setEmpresa("");
-    setCargo("");
-    setInicio("");
-    setFim("");
-    setDescricao("");
-    setAtual(false);
-  };
-
+export default function ExperienceForm({
+  draft,
+  setDraft,
+  save,
+}: ExperienceFormProps) {
   return (
-    <div className="overflow-x-hidden">
-      <form onSubmit={handleSubmit} className="bg-white p-4 rounded-2xl shadow-md space-y-3">
-        <Section title="Experiência">
+    <div>
+      <h2 className="text-xl font-semibold mb-4">Experiência</h2>
+
       <input
         type="text"
+        value={draft.empresa}
+        onChange={(e) => setDraft({ ...draft, empresa: e.target.value })}
         placeholder="Empresa"
-        value={empresa}
-        onChange={(e) => setEmpresa(e.target.value)}
-        className="w-full border p-2 rounded"
-        required
+        className="w-full border rounded p-2 mb-2"
       />
+
       <input
         type="text"
+        value={draft.cargo}
+        onChange={(e) => setDraft({ ...draft, cargo: e.target.value })}
         placeholder="Cargo"
-        value={cargo}
-        onChange={(e) => setCargo(e.target.value)}
-        className="w-full border p-2 rounded"
-        required
+        className="w-full border rounded p-2 mb-2"
       />
-      <div className="flex gap-2">
+
+      <div className="flex space-x-2 mb-2">
         <input
           type="month"
-          value={inicio}
-          onChange={(e) => setInicio(e.target.value)}
-          className="border p-2 rounded w-1/2"
-          required
+          value={draft.inicio}
+          onChange={(e) => setDraft({ ...draft, inicio: e.target.value })}
+          className="w-1/2 border rounded p-2"
         />
-        {!atual && (
-          <input
-            type="month"
-            value={fim}
-            onChange={(e) => setFim(e.target.value)}
-            className="border p-2 rounded w-1/2"
-          />
-        )}
+        <input
+          type="month"
+          value={draft.fim}
+          onChange={(e) => setDraft({ ...draft, fim: e.target.value })}
+          className="w-1/2 border rounded p-2"
+        />
       </div>
-      <label className="flex items-center gap-2">
-        <input type="checkbox" checked={atual} onChange={() => setAtual(!atual)} />
-        Trabalho Atual
-      </label>
+
       <textarea
+        value={draft.descricao}
+        onChange={(e) => setDraft({ ...draft, descricao: e.target.value })}
         placeholder="Descrição"
-        value={descricao}
-        onChange={(e) => setDescricao(e.target.value)}
-        className="w-full border p-2 rounded"
+        rows={3}
+        className="w-full border rounded p-2 mb-4"
       />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow cursor-pointer hover:bg-blue-700 transition">
+
+      <button
+        onClick={save}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+      >
         Adicionar
       </button>
-      </Section> 
-    </form>
     </div>
   );
 }

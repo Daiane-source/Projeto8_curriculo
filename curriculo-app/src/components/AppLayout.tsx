@@ -6,20 +6,16 @@ interface Props {
   onSaveCV?: () => void;
 }
 
-export default function AppLayout({
-  children,
-  onExportPDF,
-  onSaveCV,
-}: Props) {
+export default function AppLayout({ children, onExportPDF, onSaveCV }: Props) {
   return (
     <div className="flex flex-col h-screen">
 
       {/* NAVBAR */}
-      <nav className="bg-white border-b">
+      <nav className="bg-blue-800 text-white">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
           <button
             onClick={onExportPDF}
-            className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition cursor-pointer"
+            className="bg-red-600 hover:bg-red-700 transition text-white px-4 py-2 rounded shadow cursor-pointer"
           >
             Exportar PDF
           </button>
@@ -28,14 +24,11 @@ export default function AppLayout({
 
       {/* CONTEÚDO PRINCIPAL */}
       <div className="flex-1 grid grid-cols-2 overflow-x-hidden">
-
         {React.Children.map(children, (child, index) => (
           <div
             key={index}
             className={`
-              h-full 
-              overflow-y-auto overflow-x-hidden 
-              bg-white
+              h-full overflow-y-auto overflow-x-hidden bg-white
               ${index === 0 ? "border-r border-gray-300" : ""}
               py-6
             `}
@@ -45,21 +38,19 @@ export default function AppLayout({
             </div>
           </div>
         ))}
-
       </div>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t">
+      <footer className="bg-blue-800 text-white">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-end">
           <button
             onClick={onSaveCV}
-            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition cursor-pointer"
+            className="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded shadow cursor-pointer"
           >
             Salvar Currículo
           </button>
         </div>
       </footer>
-
     </div>
   );
 }

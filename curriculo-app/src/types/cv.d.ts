@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from "react"
+
 export interface PersonalData {
   name: string;
   email: string;
@@ -23,4 +25,19 @@ export interface Experience {
 export interface Skill {
   nome: string;
   nivel: string;
+}
+
+export interface SkillsFormProps {
+  skills: Skill[];                                 
+  draft: Skill;                                    
+  setDraft: Dispatch<SetStateAction<Skill>>;       
+  save: () => void;                               
+  removeSkill: (index: number) => void;            
+}
+
+
+export interface ExperienceFormProps {
+  draft: Experience;
+  setDraft: Dispatch<SetStateAction<Experience>>;
+  save: () => void;
 }
