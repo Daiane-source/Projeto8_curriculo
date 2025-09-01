@@ -1,6 +1,7 @@
 // components/ExperienceForm.jsx
 import { useState } from "react";
 import type { Experience } from "../types/cv.d.ts";
+import Section from "./Section.tsx";
 
 
 interface Props {
@@ -37,7 +38,9 @@ export default function ExperienceForm({ addExperience }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded-2xl shadow-md space-y-3">
+    <div className="overflow-x-hidden">
+      <form onSubmit={handleSubmit} className="bg-white p-4 rounded-2xl shadow-md space-y-3">
+        <Section title="Experiência">
       <input
         type="text"
         placeholder="Empresa"
@@ -84,6 +87,8 @@ export default function ExperienceForm({ addExperience }: Props) {
       <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
         Adicionar
       </button>
+      </Section> 
     </form>
+    </div>
   );
 }

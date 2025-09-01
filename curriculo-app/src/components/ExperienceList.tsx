@@ -6,8 +6,7 @@ interface Props {
 }
 export default function ExperienceList({ experiences, removeExperience }: Props) {
   return (
-    <div className="bg-white p-4 rounded-2xl shadow-md">
-      <h2 className="text-lg font-semibold mb-2">Experiências Adicionadas</h2>
+    <div className="bg-white p-4 rounded-2xl shadow-md">      
       <ul className="space-y-2">
         {experiences.map((exp, index) => (
           <li key={index} className="flex justify-between items-center border-b pb-2">

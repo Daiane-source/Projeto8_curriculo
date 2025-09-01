@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-
-type Skill = {
-  nome: string;
-  nivel: string;
-};
+import type { Skill } from "../types/cv.d";
+import Section from "./Section";
 
 interface SkillsFormProps {
   skills: Skill[];
@@ -11,55 +8,71 @@ interface SkillsFormProps {
   removeSkill: (index: number) => void;
 }
 
-export default function SkillsForm({ skills, addSkill, removeSkill }: SkillsFormProps) {
-  // Estado temporário para armazenar o que o usuário digitou/selecionou
+export default function SkillsForm({
+  skills,
+  addSkill,
+  removeSkill,
+}: SkillsFormProps) {
   const [nome, setNome] = useState("");
-  const [nivel, setNivel] = useState("Básico"); // valor inicial do select
+  const [nivel, setNivel] = useState("Básico");
 
-  //CAMPO VAZIO
-const handleAdd = () => {
-  if (nome.trim() === "") {
-    alert("⚠️ O campo de habilidade não pode estar vazio!");
-    return;
-  }
-  addSkill({ nome, nivel }); 
-  setNome(""); 
-  setNivel("Básico"); 
-};
-
+  const handleAdd = () => {
+    if (nome.trim() === "") {
+      alert("⚠️ O campo de habilidade não pode estar vazio!");
+      return;
+    }
+    addSkill({ nome, nivel });
+    setNome("");
+    setNivel("Básico");
+  };
 
   return (
-    <div>
-      <h2>Habilidades</h2>
+    <div className="overflow-x-hidden">
+      <Section title="Habilidades">
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Digite uma habilidade"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          className="w-full border rounded p-2"
+        />
+        <select
+          value={nivel}
+          onChange={(e) => setNivel(e.target.value)}
+          className="w-full border rounded p-2"
+        >
+          <option value="Básico">Básico</option>
+          <option value="Intermediário">Intermediário</option>
+          <option value="Avançado">Avançado</option>
+        </select>
+        <button
+          onClick={handleAdd}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Adicionar
+        </button>
 
-      {/* Input para o nome da habilidade */}
-      <input
-      className="mb-4"
-        type="text"
-        placeholder="Digite uma habilidade"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-      />
-
-      {/* Select para escolher o nível */}
-      <select value={nivel} onChange={(e) => setNivel(e.target.value)} className="mb-4">
-        <option value="Básico">Básico</option>
-        <option value="Intermediário">Intermediário</option>
-        <option value="Avançado">Avançado</option>
-      </select>
-
-      {/* Botão para adicionar */}
-      <button onClick={handleAdd} className="cursor-pointer">Adicionar</button>
-
-      {/* Lista das habilidades já adicionadas */}
-      <ul>
-        {skills.map((skill, index) => (
-          <li key={index}>
-            {skill.nome} ({skill.nivel}){" "}
-            <button onClick={() => removeSkill(index)} className="cursor-pointer">Excluir</button>
-          </li>
-        ))}
-      </ul>
+        <ul className="space-y-2">
+          {skills.map((skill, index) => (
+            <li
+              key={index}
+              className="flex justify-between items-center border-b pb-1"
+            >
+              <span>
+                {skill.nome} — <em>{skill.nivel}</em>
+              </span>
+              <button
+                onClick={() => removeSkill(index)}
+                className="text-red-500 hover:underline"
+              >
+                Excluir
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Section>
     </div>
   );
 }

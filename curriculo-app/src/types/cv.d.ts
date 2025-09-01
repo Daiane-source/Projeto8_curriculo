@@ -19,3 +19,8 @@ export interface Experience {
   fim: string;
   descricao: string;
 }
+
+export interface Skill {
+  nome: string;
+  nivel: string;
+}
