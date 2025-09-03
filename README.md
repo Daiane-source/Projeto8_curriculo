@@ -177,3 +177,37 @@ module.exports = {
 - Cada pessoa deve expor os dados via props e callbacks para manter o preview sempre sincronizado.
 
 - Definição inicial do shape do estado global deve ser feita em conjunto antes de começar.
+
+## Em caso de erro de execução no projeto ao atualizar.
+
+Na pasta `curriculo-app` que é a pasta raiz do projeto ao executar o comando `npm run dev` se der o erro descrito a seguir :
+
+```
+failed to load config from ./Projeto8_curriculo/curriculo-app/vite.config.ts
+error when starting dev server:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@tailwindcss/vite' imported from /home/asus/
+./Projeto8_curriculo/curriculo-app/node_modules/.vite-temp/vite.config.ts.timestamp-1756861437517-2263306a6b707.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:854:18)
+    at defaultResolve (node:internal/modules/esm/resolve:984:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:137:49)
+```
+
+Execute o comando:
+
+```
+npm install @tailwindcss/vite
+```
+
+E aposto o comando
+
+```
+npm run dev
+```
+
+Que o programa deve seguir o fluxo normal de execução.
