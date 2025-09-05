@@ -1,5 +1,6 @@
-// src/App.tsx
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -10,27 +11,24 @@ import ExperienceForm from "./components/ExperienceForm";
 import ExperienceList from "./components/ExperienceList";
 
 import PreviewPanel from "./components/PreviewPanel";
-import SkillsPreview from "./components/SkillsPreview";
-import ExperiencePreview from "./components/ExperiencePreview";
 
 import type { CVState, Skill, Experience } from "./types/cv.d";
 
-// Estado inicial dos dados pessoais
+// Estado inicial
 const initialState: CVState = {
   personal: { name: "", email: "", phone: "", linkedin: "", summary: "" },
 };
 
 export default function App() {
-  // 1) Estados centrais
   const [cv, setCv] = useState<CVState>(initialState);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
 
-  // 2) Estados de rascunho para preview instantâneo
   const [draftSkill, setDraftSkill] = useState<Skill>({
     nome: "",
     nivel: "Básico",
   });
+
   const [draftExp, setDraftExp] = useState<Experience>({
     empresa: "",
     cargo: "",
@@ -39,19 +37,18 @@ export default function App() {
     descricao: "",
   });
 
-  // 3) Funções de update
   const updatePersonal = (partial: Partial<CVState["personal"]>) =>
     setCv((prev) => ({
       ...prev,
       personal: { ...prev.personal, ...partial },
     }));
 
-  // 4) Adicionar / remover efetivamente nos arrays “salvos”
   const saveSkill = () => {
     if (!draftSkill.nome.trim()) return;
     setSkills((prev) => [...prev, draftSkill]);
     setDraftSkill({ nome: "", nivel: "Básico" });
   };
+
   const removeSkill = (i: number) =>
     setSkills((prev) => prev.filter((_, idx) => idx !== i));
 
@@ -60,10 +57,10 @@ export default function App() {
     setExperiences((prev) => [...prev, draftExp]);
     setDraftExp({ empresa: "", cargo: "", inicio: "", fim: "", descricao: "" });
   };
+
   const removeExperience = (i: number) =>
     setExperiences((prev) => prev.filter((_, idx) => idx !== i));
 
-  // 5) Exportar PDF (mesma lógica de antes)
   const handleExportPDF = useCallback(() => {
     const pdfContent = document.getElementById("pdfContent");
     if (!pdfContent) return;
@@ -92,51 +89,55 @@ export default function App() {
       });
   }, []);
 
-  // 6) Salvar no LocalStorage
   const handleSaveCV = useCallback(() => {
     const data = { personal: cv.personal, skills, experiences };
     localStorage.setItem("meuCurriculo", JSON.stringify(data));
-    alert("Currículo salvo localmente!");
+    toast.success("Currículo salvo localmente!");
   }, [cv, skills, experiences]);
 
-  // 7) Mescla “salvo” + “rascunho” para preview instantâneo
   const previewSkills = draftSkill.nome ? [...skills, draftSkill] : skills;
   const previewExperiences = draftExp.empresa
     ? [...experiences, draftExp]
     : experiences;
 
   return (
-    <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
-      {/* Coluna 1: formulários */}
-      <div>
-        <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
+    <>
+      <ToastContainer position="top-right" autoClose={4000} />
 
-        <SkillsForm
-          skills={skills}
-          draft={draftSkill}
-          setDraft={setDraftSkill}
-          save={saveSkill}
-          removeSkill={removeSkill}
-        />
+      <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
+        {/* Coluna 1: formulários */}
+        <div>
+          <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
 
-        <ExperienceForm
-          draft={draftExp}
-          setDraft={setDraftExp}
-          save={saveExperience}
-        />
+          <SkillsForm
+            skills={skills}
+            draft={draftSkill}
+            setDraft={setDraftSkill}
+            save={saveSkill}
+            removeSkill={removeSkill}
+          />
 
-        <ExperienceList
-          experiences={experiences}
-          removeExperience={removeExperience}
-        />
-      </div>
+          <ExperienceForm
+            draft={draftExp}
+            setDraft={setDraftExp}
+            save={saveExperience}
+          />
 
-      {/* Coluna 2: preview em tempo real */}
-      <div id="pdfContent" className="space-y-6">
-        <PreviewPanel personal={cv.personal} />
-        <SkillsPreview skills={previewSkills} />
-        <ExperiencePreview experiences={previewExperiences} />
-      </div>
-    </AppLayout>
+          <ExperienceList
+            experiences={experiences}
+            removeExperience={removeExperience}
+          />
+        </div>
+
+        {/* Coluna 2: preview completo dentro da borda */}
+        <div id="pdfContent">
+          <PreviewPanel
+            personal={cv.personal}
+            skills={previewSkills}
+            experiences={previewExperiences}
+          />
+        </div>
+      </AppLayout>
+    </>
   );
 }

@@ -1,67 +1,79 @@
-// src/components/PreviewPanel.tsx
 import React from "react";
-import type { PersonalData } from "../types/cv.d";
+import type { PersonalData, Skill, Experience } from "../types/cv.d";
+import Section from "./Section";
 
 interface PreviewPanelProps {
   personal: PersonalData;
+  skills: Skill[];
+  experiences: Experience[];
 }
 
-/**
- * PreviewPanel
- * - Exibe foto, nome, contatos e resumo profissional
- * - Não toca em skills nem experiences (eles têm seus próprios previews)
- */
-export default function PreviewPanel({ personal }: PreviewPanelProps) {
+export default function PreviewPanel({ personal, skills, experiences }: PreviewPanelProps) {
   return (
-    <div className="max-w-2xl mx-auto bg-white text-gray-800 font-sans px-6 py-8">
-      {/* Cabeçalho: foto e dados pessoais */}
-      <div className="flex items-start gap-6 mb-8">
+    <div className="container bg-white p-5 border rounded shadow-sm" style={{ maxWidth: "800px" }}>
+      {/* Cabeçalho: Foto + Dados Pessoais */}
+      <div className="d-flex align-items-start mb-4">
         {personal.photo && (
           <img
             src={personal.photo}
             alt="Foto de perfil"
-            className="w-24 h-24 rounded-full object-cover border border-gray-300 mt-4"
-            style={{width: 96, height: 96}}
+            className="rounded-circle border me-4"
+            style={{ width: "96px", height: "96px", objectFit: "cover" }}
           />
         )}
-        <div className="pt-6">
-          <h1 className="text-2xl font-bold">
-            {personal.name || "Seu nome aqui"}
-          </h1>
-          <p className="text-sm text-gray-600">
-            {personal.email || "email@email.com"} ·{" "}
-            {personal.phone || "(99) 99999-9999"}
+        <div>
+          <h1 className="h4 fw-bold mb-1">{personal.name || "Seu nome aqui"}</h1>
+          <p className="mb-0 text-muted">
+            {personal.email || "email@email.com"} · {personal.phone || "(99) 99999-9999"}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="mb-0 text-muted">
             {personal.linkedin || "linkedin.com/in/seu-perfil"}
           </p>
         </div>
       </div>
 
-      {/* Seção: Resumo Profissional */}
+      {/* Resumo Profissional */}
       <Section title="Resumo Profissional">
-        <p className="text-gray-700 whitespace-pre-line">
-          {personal.summary ||
-            "Nenhum resumo profissional adicionado ainda."}
+        <p className="text-dark" style={{ whiteSpace: "pre-line" }}>
+          {personal.summary || "Nenhum resumo profissional adicionado ainda."}
         </p>
       </Section>
-    </div>
-  );
-}
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="mb-8">
-      <h2 className="text-lg font-semibold text-blue-700 border-b pb-1 mb-4 uppercase tracking-wide">
-        {title}
-      </h2>
-      {children}
+      {/* Idiomas e Habilidades */}
+      <Section title="Idiomas e Habilidades">
+        {skills.length === 0 ? (
+          <p className="text-muted fst-italic">Nenhuma habilidade adicionada ainda.</p>
+        ) : (
+          <ul className="mb-0 ps-3">
+            {skills.map((skill, index) => (
+              <li key={index} className="text-dark mb-1">
+                {skill.nome} — <span className="fst-italic text-muted">{skill.nivel}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      {/* Experiências */}
+      <Section title="Experiências">
+        {experiences.length === 0 ? (
+          <p className="text-muted fst-italic">Nenhuma experiência adicionada ainda.</p>
+        ) : (
+          experiences.map((exp, i) => (
+            <div key={i} className="mb-4">
+              <h3 className="h6 fw-semibold mb-1 text-dark">
+                {exp.cargo} — {exp.empresa}
+              </h3>
+              <p className="text-muted small mb-1">
+                {exp.inicio} – {exp.fim || "Atual"}
+              </p>
+              <p className="text-dark mb-0" style={{ whiteSpace: "pre-line" }}>
+                {exp.descricao}
+              </p>
+            </div>
+          ))
+        )}
+      </Section>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import type { SkillsFormProps } from "../types/cv.d";
 
 export default function SkillsForm({
@@ -10,45 +9,65 @@ export default function SkillsForm({
 }: SkillsFormProps) {
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Habilidades</h2>
+      <h2 className="h5 fw-semibold mb-4">Habilidades</h2>
 
-      <input
-        type="text"
-        value={draft.nome}
-        onChange={(e) => setDraft({ ...draft, nome: e.target.value })}
-        placeholder="Digite uma habilidade"
-        className="w-full border rounded p-2 mb-2"
-      />
+      {/* Campo de nome da habilidade */}
+      <div className="mb-3">
+        <label className="form-label">Nome da habilidade</label>
+        <input
+          type="text"
+          value={draft.nome}
+          onChange={(e) => setDraft({ ...draft, nome: e.target.value })}
+          placeholder="Ex: Comunicação, JavaScript..."
+          className="form-control"
+        />
+      </div>
 
-      <select
-        value={draft.nivel}
-        onChange={(e) => setDraft({ ...draft, nivel: e.target.value })}
-        className="w-full border rounded p-2 mb-2"
-      >
-        <option>Básico</option>
-        <option>Intermediário</option>
-        <option>Avançado</option>
-      </select>
+      {/* Nível da habilidade */}
+      <div className="mb-3">
+        <label className="form-label">Nível</label>
+        <select
+          value={draft.nivel}
+          onChange={(e) => setDraft({ ...draft, nivel: e.target.value })}
+          className="form-select"
+        >
+          <option>Básico</option>
+          <option>Intermediário</option>
+          <option>Avançado</option>
+        </select>
+      </div>
 
-      <button
-        onClick={save}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4"
-      >
-        Adicionar
-      </button>
+      {/* Botão Adicionar */}
+      <div className="d-flex justify-content-end mb-4">
+        <button
+          onClick={save}
+          className="btn btn-sm text-white"
+          style={{
+            backgroundColor: "rgba(13, 110, 253, 0.9)",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 1)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 0.9)";
+          }}
+        >
+          Adicionar
+        </button>
+      </div>
 
-      <ul className="space-y-2">
+      {/* Lista de habilidades adicionadas */}
+      <ul className="list-group">
         {skills.map((s, i) => (
-          <li
-            key={i}
-            className="flex justify-between items-center border-b pb-1"
-          >
+          <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
             <span>
               {s.nome} — <em>{s.nivel}</em>
             </span>
             <button
               onClick={() => removeSkill(i)}
-              className="text-red-500 hover:underline"
+              className="btn btn-sm btn-outline-danger"
             >
               Excluir
             </button>

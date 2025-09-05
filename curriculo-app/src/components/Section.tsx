@@ -7,8 +7,8 @@ type SectionProps = {
 
 export default function Section({ title, children }: SectionProps) {
   return (
-    <div>
-      <h2 className="text-lg font-semibold text-blue-700 border-b pb-1 mb-4 uppercase tracking-wide">
+    <div className="mb-4">
+      <h2 className="h6 fw-semibold text-primary border-bottom pb-2 mb-3 text-uppercase">
         {title}
       </h2>
       {children}
