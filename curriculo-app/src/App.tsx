@@ -1,5 +1,7 @@
 // src/App.tsx
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { ToastContainer } from "react-toastify";
+
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -106,6 +108,9 @@ export default function App() {
     : experiences;
 
   return (
+    <>
+     <ToastContainer position="top-right" autoClose={4000} />
+
     <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
       {/* Coluna 1: formulários */}
       <div>
@@ -138,5 +143,6 @@ export default function App() {
         <ExperiencePreview experiences={previewExperiences} />
       </div>
     </AppLayout>
+    </>
   );
 }

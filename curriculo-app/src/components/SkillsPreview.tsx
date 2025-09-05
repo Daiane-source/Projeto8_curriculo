@@ -9,17 +9,17 @@ interface SkillsPreviewProps {
   skills: Skill[];
 }
 
-
 export default function SkillsPreview({ skills }: SkillsPreviewProps) {
   return (
     <Section title="Idiomas e Habilidades">
       {skills.length === 0 ? (
-        <p className="text-gray-500 italic">Nenhuma habilidade adicionada ainda.</p>
+        <p className="text-muted fst-italic">Nenhuma habilidade adicionada ainda.</p>
       ) : (
-        <ul className="list-disc list-inside space-y-1 text-gray-700">
+        <ul className="list-group">
           {skills.map((skill, index) => (
-            <li key={index}>
-              {skill.nome} — <span className="italic">{skill.nivel}</span>
+            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <span>{skill.nome}</span>
+              <span className="fst-italic text-muted">{skill.nivel}</span>
             </li>
           ))}
         </ul>
