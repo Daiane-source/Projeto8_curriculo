@@ -8,21 +8,23 @@ interface Props {
 
 export default function ExperiencePreview({ experiences }: Props) {
   return (
-    <Section title="Experiências Adicionadas">
+    <Section title="Experiências">
       {experiences.length === 0 ? (
-        <p className="text-gray-500 italic">
+        <p className="text-muted fst-italic">
           Nenhuma experiência adicionada ainda.
         </p>
       ) : (
         experiences.map((exp, i) => (
           <div key={i} className="mb-4">
-            <h3 className="text-lg font-semibold">
-              {exp.cargo} – {exp.empresa}
+            <h3 className="h6 fw-semibold mb-1 text-dark">
+              {exp.cargo} — {exp.empresa}
             </h3>
-            <p className="text-sm text-gray-600">
-              {exp.inicio} – {exp.fim}
+            <p className="text-muted small mb-1">
+              {exp.inicio} – {exp.fim || "Atual"}
             </p>
-            <p className="text-gray-700">{exp.descricao}</p>
+            <p className="text-dark mb-0" style={{ whiteSpace: "pre-line" }}>
+              {exp.descricao}
+            </p>
           </div>
         ))
       )}
