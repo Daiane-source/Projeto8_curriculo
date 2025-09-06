@@ -2,7 +2,7 @@ import type { PersonalData } from "../types/cv.d";
 import Section from "./Section";
 import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { toast } from "react-toastify";
+import LoadingSpinner from "./LoadingSpinner";
 
 type Props = {
   personal: PersonalData;
@@ -27,14 +27,23 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
       const textoMelhorado = response.text();
 
       updatePersonal({ summary: textoMelhorado });
-      toast.success("Resumo aprimorado com sucesso!");
     } catch (error) {
       console.error("Erro ao melhorar com IA:", error);
-      toast.error("Não foi possível melhorar o resumo. Tente novamente.");
+      throw new Error("Não foi possível melhorar o resumo");
     } finally {
       setLoadingIA(false);
     }
   }
+
+  const handleMelhorarIA = async () => {
+    if (!personal.summary.trim()) return;
+
+    try {
+      await melhorarResumoComIA(personal.summary);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -125,22 +134,29 @@ export default function FormPanel({ personal, updatePersonal }: Props) {
         {/* Botão IA abaixo e à direita */}
         <div className="d-flex justify-content-end mt-3">
           <button
-            onClick={() => melhorarResumoComIA(personal.summary)}
+            onClick={handleMelhorarIA}
             disabled={loadingIA || !personal.summary.trim()}
-            className="btn btn-sm text-white"
+            className="btn btn-sm text-white d-flex align-items-center gap-2"
             style={{
-              backgroundColor: "rgba(13, 110, 253, 0.9)", // azul Bootstrap com opacidade
+              backgroundColor: loadingIA
+                ? "#6c757d"
+                : "rgba(13, 110, 253, 0.9)",
               cursor: loadingIA ? "not-allowed" : "pointer",
-              transition: "background-color 0.3s ease",
+              transition: "all 0.3s ease",
+              opacity: loadingIA ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
-              if (!loadingIA) e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 1)";
+              if (!loadingIA)
+                e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 1)";
             }}
             onMouseLeave={(e) => {
-              if (!loadingIA) e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 0.9)";
+              if (!loadingIA)
+                e.currentTarget.style.backgroundColor =
+                  "rgba(13, 110, 253, 0.9)";
             }}
           >
-            {loadingIA ? "Melhorando..." : "Melhorar com IA"}
+            {loadingIA && <LoadingSpinner size="small" />}
+            {loadingIA ? "Processando..." : "Melhorar com IA"}
           </button>
         </div>
       </Section>

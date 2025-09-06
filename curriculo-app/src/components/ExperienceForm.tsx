@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { ExperienceFormProps } from "../types/cv.d";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { toast } from "react-toastify";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function ExperienceForm({
   draft,
@@ -25,14 +25,24 @@ export default function ExperienceForm({
       const textoMelhorado = response.text();
 
       setDraft({ ...draft, descricao: textoMelhorado });
-      toast.success("Descrição aprimorada com sucesso!");
     } catch (error) {
       console.error("Erro ao melhorar com IA:", error);
-      toast.error("Não foi possível melhorar a descrição. Tente novamente.");
+      throw new Error("Não foi possível melhorar a descrição");
     } finally {
       setLoadingIA(false);
     }
   }
+
+  const handleMelhorarIA = async () => {
+    if (!draft.descricao.trim()) return;
+
+    try {
+      await melhorarDescricaoComIA(draft.descricao);
+    } catch (error) {
+      // O erro será tratado pelo componente pai se necessário
+      throw error;
+    }
+  };
 
   return (
     <div>
@@ -97,24 +107,28 @@ export default function ExperienceForm({
       </div>
 
       {/* Botão IA abaixo da descrição */}
-      <div className="d-flex justify-content-end mb-4">
+      <div className="d-flex justify-content-end mb-4 gap-2">
         <button
-          onClick={() => melhorarDescricaoComIA(draft.descricao)}
+          onClick={handleMelhorarIA}
           disabled={loadingIA || !draft.descricao.trim()}
-          className="btn btn-sm text-white me-2"
+          className="btn btn-sm text-white d-flex align-items-center gap-2"
           style={{
-            backgroundColor: "rgba(13, 110, 253, 0.9)",
+            backgroundColor: loadingIA ? "#6c757d" : "rgba(13, 110, 253, 0.9)",
             cursor: loadingIA ? "not-allowed" : "pointer",
-            transition: "background-color 0.3s ease",
+            transition: "all 0.3s ease",
+            opacity: loadingIA ? 0.7 : 1,
           }}
           onMouseEnter={(e) => {
-            if (!loadingIA) e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 1)";
+            if (!loadingIA)
+              e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 1)";
           }}
           onMouseLeave={(e) => {
-            if (!loadingIA) e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 0.9)";
+            if (!loadingIA)
+              e.currentTarget.style.backgroundColor = "rgba(13, 110, 253, 0.9)";
           }}
         >
-          {loadingIA ? "Melhorando..." : "Melhorar com IA"}
+          {loadingIA && <LoadingSpinner size="small" />}
+          {loadingIA ? "Processando..." : "Melhorar com IA"}
         </button>
 
         {/* Botão Adicionar */}
@@ -122,7 +136,7 @@ export default function ExperienceForm({
           onClick={save}
           className="btn btn-sm text-white"
           style={{
-            backgroundColor: "rgba(25, 135, 84, 0.9)", // verde Bootstrap com opacidade
+            backgroundColor: "rgba(25, 135, 84, 0.9)",
             cursor: "pointer",
             transition: "background-color 0.3s ease",
           }}
