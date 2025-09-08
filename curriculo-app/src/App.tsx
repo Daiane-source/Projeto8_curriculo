@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -13,18 +13,27 @@ import PreviewPanel from "./components/PreviewPanel";
 import Toast from "./components/Toast";
 import SkeletonScreen from "./components/SkeletonScreen";
 
+// 🔹 Importando os novos componentes
+import Modal from "./components/Modal";
+
+
 import type { CVState, Skill, Experience } from "./types/cv.d";
 
-// Estado inicial
+
+
+// Estado inicial do CV
 const initialState: CVState = {
   personal: { name: "", email: "", phone: "", linkedin: "", summary: "" },
 };
 
 export default function App() {
+  // Estados principais do currículo
   const [cv, setCv] = useState<CVState>(initialState);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Estado para mensagens (toasts)
   const [toast, setToast] = useState<{
     show: boolean;
     message: string;
@@ -35,6 +44,10 @@ export default function App() {
     type: "info",
   });
 
+  // Estado para abrir/fechar o modal de confirmação
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Estados temporários para rascunho de skills e experiências
   const [draftSkill, setDraftSkill] = useState<Skill>({
     nome: "",
     nivel: "Básico",
@@ -48,6 +61,7 @@ export default function App() {
     descricao: "",
   });
 
+  // Funções auxiliares de toast
   const showToast = (
     message: string,
     type: "success" | "error" | "info" = "info"
@@ -59,12 +73,14 @@ export default function App() {
     setToast({ show: false, message: "", type: "info" });
   };
 
+  // Atualizar dados pessoais
   const updatePersonal = (partial: Partial<CVState["personal"]>) =>
     setCv((prev) => ({
       ...prev,
       personal: { ...prev.personal, ...partial },
     }));
 
+  // Salvar habilidade
   const saveSkill = () => {
     if (!draftSkill.nome.trim()) return;
     setSkills((prev) => [...prev, draftSkill]);
@@ -72,11 +88,13 @@ export default function App() {
     showToast("Habilidade adicionada com sucesso!", "success");
   };
 
+  // Remover habilidade
   const removeSkill = (i: number) => {
     setSkills((prev) => prev.filter((_, idx) => idx !== i));
     showToast("Habilidade removida", "info");
   };
 
+  // Salvar experiência
   const saveExperience = () => {
     if (!draftExp.empresa.trim()) return;
     setExperiences((prev) => [...prev, draftExp]);
@@ -84,11 +102,13 @@ export default function App() {
     showToast("Experiência adicionada com sucesso!", "success");
   };
 
+  // Remover experiência
   const removeExperience = (i: number) => {
     setExperiences((prev) => prev.filter((_, idx) => idx !== i));
     showToast("Experiência removida", "info");
   };
 
+  // Exportar currículo para PDF
   const handleExportPDF = useCallback(async () => {
     setIsLoading(true);
     showToast("Gerando PDF...", "info");
@@ -97,12 +117,13 @@ export default function App() {
       const pdfContent = document.getElementById("pdfContent");
       if (!pdfContent) return;
 
+      // Ajustando altura e overflow para captura
       const origH = pdfContent.style.height;
       const origO = pdfContent.style.overflowY;
       pdfContent.style.height = `${pdfContent.scrollHeight}px`;
       pdfContent.style.overflowY = "visible";
 
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Pequeno delay para renderização
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Delay para renderizar
 
       const canvas = await html2canvas(pdfContent, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
@@ -131,6 +152,7 @@ export default function App() {
     }
   }, []);
 
+  // Salvar currículo no LocalStorage
   const handleSaveCV = useCallback(() => {
     try {
       const data = { personal: cv.personal, skills, experiences };
@@ -141,6 +163,7 @@ export default function App() {
     }
   }, [cv, skills, experiences]);
 
+  // Preview em tempo real (inclui rascunhos)
   const previewSkills = draftSkill.nome ? [...skills, draftSkill] : skills;
   const previewExperiences = draftExp.empresa
     ? [...experiences, draftExp]
@@ -148,12 +171,15 @@ export default function App() {
 
   return (
     <>
+      {/* Container de notificações */}
       <ToastContainer position="top-right" autoClose={4000} />
 
+      {/* Toast customizado */}
       {toast.show && (
         <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
 
+      {/* Tela de carregamento (quando gera PDF) */}
       {isLoading && (
         <div className="loading-overlay">
           <div className="loading-content">
@@ -163,7 +189,11 @@ export default function App() {
         </div>
       )}
 
-      <AppLayout onExportPDF={handleExportPDF} onSaveCV={handleSaveCV}>
+      {/* Layout principal */}
+      <AppLayout 
+        onExportPDF={handleExportPDF} 
+        onSaveCV={() => setIsModalOpen(true)} // 🔹 agora abre o modal em vez de salvar direto
+      >
         {/* Coluna 1: formulários */}
         <div>
           <FormPanel personal={cv.personal} updatePersonal={updatePersonal} />
@@ -188,7 +218,7 @@ export default function App() {
           />
         </div>
 
-        {/* Coluna 2: preview completo dentro da borda */}
+        {/* Coluna 2: preview completo */}
         <div id="pdfContent">
           <PreviewPanel
             personal={cv.personal}
@@ -198,6 +228,14 @@ export default function App() {
         </div>
       </AppLayout>
 
+      {/* 🔹 Modal de Confirmação para salvar o CV */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2 className="text-lg font-semibold mb-4">Confirmar Ação</h2>
+        <p>Tem certeza que deseja salvar este currículo?</p>
+           
+      </Modal>
+
+      {/* Estilos para tela de carregamento */}
       <style>{`
         .loading-overlay {
           position: fixed;
